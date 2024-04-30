@@ -126,7 +126,7 @@ text:
         'text_from_filename' activate the extraction from text of a filename. With 'style'
         you can define the drawtext parameters like position, color, etc. Post Text over
         API will override this. With 'regex' you can format file names, to get a title from it.
-    add_text: true
+    add_text: false
     text_from_filename: false
     fontfile: "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
     style: "x=(w-tw)/2:y=(h-line_h)*0.9:fontsize=24:fontcolor=#ffffff:box=1:boxcolor=#000000:boxborderw=4"
