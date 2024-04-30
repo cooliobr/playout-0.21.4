@@ -34,7 +34,7 @@ use ffplayout_lib::{
         controller::ProcessUnit::*, get_delta, sec_to_time, stderr_reader, test_tcp_port, Media,
         PlayerControl, PlayoutConfig, PlayoutStatus, ProcessControl,
     },
-    vec_strings,
+    vec_strings, ADVANCED_CONFIG,
 };
 
 /// Ingest Server for HLS
@@ -45,16 +45,12 @@ fn ingest_to_hls_server(
 ) -> Result<(), Error> {
     let playlist_init = playout_stat.list_init;
 
-    let mut server_prefix = vec_strings!["-hide_banner", "-nostats", "-v", "level+info"];
+    let mut server_prefix = vec_strings!["-hide_banner", "-nostats", "-nostats", "-threads", "2", "-thread_queue_size", "128", "-hwaccel_device", "0", "-hwaccel", "cuvid", "-hwaccel_output_format", "cuda", "-v", "level+info"];
     let stream_input = config.ingest.input_cmd.clone().unwrap();
     let mut dummy_media = Media::new(0, "Live Stream", false);
     dummy_media.unit = Ingest;
 
-    if let Some(ingest_input_cmd) = config
-        .advanced
-        .as_ref()
-        .and_then(|a| a.ingest.input_cmd.clone())
-    {
+    if let Some(ingest_input_cmd) = &ADVANCED_CONFIG.ingest.input_cmd {
         server_prefix.append(&mut ingest_input_cmd.clone());
     }
 
@@ -205,13 +201,9 @@ pub fn write_hls(
             }
         }
 
-        let mut enc_prefix = vec_strings!["-hide_banner", "-nostats", "-v", &ff_log_format];
+        let mut enc_prefix = vec_strings!["-hide_banner", "-nostats", "-nostats", "-threads", "2", "-thread_queue_size", "128", "-hwaccel_device", "0", "-hwaccel", "cuvid", "-hwaccel_output_format", "cuda", "-v", &ff_log_format];
 
-        if let Some(encoder_input_cmd) = config
-            .advanced
-            .as_ref()
-            .and_then(|a| a.encoder.input_cmd.clone())
-        {
+        if let Some(encoder_input_cmd) = &ADVANCED_CONFIG.encoder.input_cmd {
             enc_prefix.append(&mut encoder_input_cmd.clone());
         }
 
